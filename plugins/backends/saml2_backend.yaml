@@ -1,0 +1,28 @@
+module: satosa.backends.saml2.SAMLBackend
+name: Saml2Backend
+config:
+  sp_config:
+    entityid: "http://10.10.0.26:8080/sp"
+    name: "SATOSA SP"
+
+    key_file: "/opt/satosa/pki/satosa.key"
+    cert_file: "/opt/satosa/pki/satosa.crt"
+    xmlsec_binary: /usr/bin/xmlsec1
+
+    metadata:
+      local:
+        - "/opt/satosa/metadata/idp/external-idp.xml"
+
+    service:
+      sp:
+        allow_unsolicited: true
+        authn_requests_signed: false
+        want_response_signed: false
+        want_assertions_signed: false
+
+        endpoints:
+          assertion_consumer_service:
+            - - "http://10.10.0.26:8080/Saml2Backend/saml2/acs"
+              - "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+
+        name_id_policy_format: "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"

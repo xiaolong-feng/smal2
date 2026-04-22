@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EntityDescriptor
+    xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
+    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+    entityID="https://idp3.ihep.ac.cn/idp/shibboleth"
+    validUntil="2030-12-31T23:59:59Z">
+
+    <IDPSSODescriptor
+        protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"
+        WantAuthnRequestsSigned="false">
+
+        <KeyDescriptor use="signing">
+            <ds:KeyInfo>
+                <ds:X509Data>
+                    <ds:X509Certificate>MIIEJzCCAo+gAwIBAgIUGOzzmV8YIJCqVhAG7OfcjO23+vcwDQYJKoZIhvcNAQELBQAwGjEYMBYGA1UEAwwPaWRwMy5paGVwLmFjLmNuMB4XDTIzMDEwNjA3NDM0NFoXDTQzMDEwNjA3NDM0NFowGjEYMBYGA1UEAwwPaWRwMy5paGVwLmFjLmNuMIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAlUQYlCQYs4sJxlrDz7YaSfuB5DkiWmOHcZ46KBsO/sP9MhaFIUXfmaQ/SfndPYCdX8kDLN+WYS7uTTMfUTvEr8pZ7C60lXYV/oKpnhHNVOfnprW8NsrFoV38rhVb/xg7zCUdlZPaVRsLjZaj6m1kMq4Rqvw6if7CazgjyEJK9EXVq2yr9TfE6Pul2jjyqdq5pSX2eIzsPzvjjt0oB0Pgs8UC50oedun+JSFnlS93FphCFOluCYQ1Z+3DjW27zPdfb+J4cQf1CdIeQvk4HxXp84VIcV+7zFwyL/L2KYGuZlyL/k6nACPB5X+acnYUY/uDygOV+a8bND/c0TeFZbCs5wAzDKXeNxw1+xoRJ/usccg3sTqEM6CBUnA8EyaFFHTeb+lu4FrB+LtM9VbTa1BAoRGhGrgw4RP6a6CmfHUU4sVB69zEQlGed12aE1DVQFx7DBVS2NfKIXva8WXRkPhySLdLqEhMl1KzOgLU+SYalB8ZzIo2Z37EPT2Q7gf8coRjAgMBAAGjZTBjMB0GA1UdDgQWBBTl68jP2A/T/37pHBN1UCk2WAFyuTBCBgNVHREEOzA5gg9pZHAzLmloZXAuYWMuY26GJmh0dHBzOi8vaWRwMy5paGVwLmFjLmNuL2lkcC9zaGliYm9sZXRoMA0GCSqGSIb3DQEBCwUAA4IBgQAHfLdFGvWX9376lgF/8lh53rk5+TIV6rg5d7mCbu1PrSKaRcwCzZ6fUwMBROrmf9YLjKTcABSq/Q5N+t56K6ez3wcpWTgSixZFN5DK5eQFwQsnqu6UP5GERFgJlRXY77FO4qR2Fyg96hYDMD3bgLWBZ/jASPqzcwZvnNsjykP3n9v8izXdZ/8eVLjKBKT98qtllP5ruX5B6FVucH/IBKtE2kgvAp6Zn5soKGPoKU/NCFHfTJ/3t8QUVx+qsdYzSlIe66aqpxgZu9pJ8G29iEexbWpTgVk61XneAEeBROx0B4yqX9Ru3BXdiAPeuGP5Y/eREXY312vNCKw/6HdRpS06ufDx6MGswBBzAYlz42NvC2URq6eucV3mmjO1csfBpGY7KmfDwljwZvoscBI3EASyv7QNaXAWYOUVKHHNa76eIi7M6DurxJBt8GhU28QXRwGJ0GArzOWQEhBm5XhOmesrpxtwZzPKUI6ypvXAjVHPmlduaqHDuusW3W09RVw6I6w=</ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </KeyDescriptor>
+
+        <KeyDescriptor use="signing">
+            <ds:KeyInfo>
+                <ds:X509Data>
+                    <ds:X509Certificate>MIIEJzCCAo+gAwIBAgIUH3OL6neYmu4bHeKIQTa0kI8AClYwDQYJKoZIhvcNAQELBQAwGjEYMBYGA1UEAwwPaWRwMy5paGVwLmFjLmNuMB4XDTIzMDEwNjA3NDI1OFoXDTQzMDEwNjA3NDI1OFowGjEYMBYGA1UEAwwPaWRwMy5paGVwLmFjLmNuMIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEA52mUOzOFAzWs+J18mwBKPzyBtrFQxlILCPP3bn5fD3N9f8QWetNaAzqVhx+3lE49MnqcVmqj3r/WHTUrmbkN0Cgz6O77tjxzaMPuQbj/48ZKH7hjhlUdtiY+3ZVNhO6eSgV4l4zZjKW1Fo+B9k+rWGPocCCGeINWGv5Zs1957EiDeK2q8F9biiDFEXrr89IsHN71aMz+TcD/+qhjg5EnNrB51tzKBIts2GIu2SMPu+FW7U48bxgLMqlJVWei8QeR+re0pDaxYxik2O+yhzGs3jPwdOFCTkvU6c86Gc1LySyUVYSjymtSaqkKN7lN23L+JT2yBjbuINbb+TFzzPkH9YLWc3JfVroQ9In/afVkWSf9L/HWdFIRDq7AyEYmFQ4fk6e/35n4viR5lM3SuNq+lY6JI1NFtE792khVHZdECmcxuHpocjPfQG9Glj76WEr6RyLTZXU7SBH5CsMHdHspxTfDBSB59RpUiKWUOgF5RMypBiUpPViVF3rRc3GZuMSxAgMBAAGjZTBjMB0GA1UdDgQWBBQ2U8DblrmLbztEtnSB11NM/hj4szBCBgNVHREEOzA5gg9pZHAzLmloZXAuYWMuY26GJmh0dHBzOi8vaWRwMy5paGVwLmFjLmNuL2lkcC9zaGliYm9sZXRoMA0GCSqGSIb3DQEBCwUAA4IBgQCd2dX+InNBKeO8Hx9MJDdCv92Eq6c32rcphffVWxOLL6KHChcKZLnkBGsEq5+6pODGxcmt6tWaGWhATRO42oR7MCCl/QuLLvpBXnQEqpHEpO/d1FXRlXE4n3lcoiAcnCzVNlavxvU1asphQHQMXAThRgNYOpCgaBwHZbckOhfbKkEjD8ELIgFwjSlkTPVDG5vjH5HCz8m/eZajDYwBikn1gt9tdMJjtIPSjtVVoFLM03J8cyvfFtkXCbLwNkUwoeWw7cPtzjC22JhJ8ZRt90w7aPePByrFrkDnv5qdJhGS7ANaPwMDIpgokX12SwsV604tz1IUH3cREvM+T4BiafqVDU5GgxII5JhIQ0IwVe6j176bdktQlW7cl862sycHRVFsMAakG1zwMeIihPWw/tynVJuX05AeGbn19k9qhLJdGph8lk9L4zxmtQg00XoJD/GnOIGPNvZK67DCDcApCeZtRPkRKmrAfhwgU06wnD1CuACC1VPVPsYNRQUIBbXu2O8=</ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </KeyDescriptor>
+
+        <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</NameIDFormat>
+
+        <SingleSignOnService
+            Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+            Location="https://idp3.ihep.ac.cn/idp/profile/SAML2/POST/SSO"/>
+
+        <ArtifactResolutionService
+            Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+            Location="https://idp3.ihep.ac.cn:8443/idp/profile/SAML2/SOAP/ArtifactResolution"
+            index="0"/>
+    </IDPSSODescriptor>
+</EntityDescriptor>

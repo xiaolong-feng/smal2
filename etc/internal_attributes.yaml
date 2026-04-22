@@ -1,0 +1,16 @@
+attributes:
+  uid:
+    saml: [uid, eduPersonPrincipalName, persistent-id]
+  mail:
+    saml: [mail]
+  display_name:
+    saml: [displayName, cn]
+  given_name:
+    saml: [givenName]
+  sn:
+    saml: [sn, surname]
+  eppn:
+    saml: [eduPersonPrincipalName]
+
+user_id_from_attrs: [eppn, uid, mailuid]
+hash_id: "sha256"

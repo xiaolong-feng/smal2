@@ -1,0 +1,18 @@
+services:
+  satosa:
+    build: .
+    container_name: ihep-proxy-test
+    user: root
+    ports:
+      - "127.0.0.1:18080:8080"
+    volumes:
+      - ./etc:/opt/satosa/etc
+      - ./plugins:/opt/satosa/plugins
+      - ./certs:/opt/satosa/pki
+      - ./metadata:/opt/satosa/metadata
+    environment:
+      SATOSA_STATE_ENCRYPTION_KEY: "IHEP_SECRET_123"
+      SATOSA_USER_ID_HASH_SALT: "IHEP_SALT_123"
+      SATOSA_CONFIG: "/opt/satosa/etc/proxy_conf.yaml"
+    command: >
+      gunicorn -b 0.0.0.0:8080 --timeout 120 --graceful-timeout 30 satosa.wsgi:app

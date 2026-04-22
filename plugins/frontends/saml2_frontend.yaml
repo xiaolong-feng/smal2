@@ -1,0 +1,57 @@
+module: satosa.frontends.saml2.SAMLFrontend
+name: Saml2Frontend
+config:
+  entityid_endpoint: true
+
+  endpoints:
+    single_sign_on_service:
+      urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect: saml2/idp/redirect
+      urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST: saml2/idp/post
+    single_logout_service:
+      urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect: saml2/idp/slo/redirect
+      urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST: saml2/idp/slo/post
+
+  idp_config:
+    entityid: "http://10.10.0.26:8080/idp"
+    description: "SATOSA IdP Frontend"
+
+    key_file: "/opt/satosa/pki/satosa.key"
+    cert_file: "/opt/satosa/pki/satosa.crt"
+    xmlsec_binary: /usr/bin/xmlsec1
+    accepted_time_diff: 60
+
+    metadata:
+      local:
+        - "/opt/satosa/metadata/sp/indico.xml"
+
+    organization:
+      display_name:
+        - [SATOSA Proxy, en]
+      name:
+        - [SATOSA Proxy, en]
+      url:
+        - [https://satosa.example.org, en]
+
+    contact_person:
+      - contact_type: technical
+        given_name: Admin
+        sur_name: SATOSA
+        email_address:
+          - admin@example.org
+
+    service:
+      idp:
+        name: "SATOSA Proxy IdP"
+        endpoints: {}
+
+        name_id_format:
+          - urn:oasis:names:tc:SAML:2.0:nameid-format:persistent
+          - urn:oasis:names:tc:SAML:2.0:nameid-format:emailAddress
+
+        policy:
+          default:
+            lifetime:
+              minutes: 15
+            attribute_restrictions: null
+            sign_response: false
+            sign_assertion: false
