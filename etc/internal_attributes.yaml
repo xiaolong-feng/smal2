@@ -1,22 +1,45 @@
+# attributes:
+#   uid:
+#     saml: [pairwise-id]
+#   mail:
+#     saml: [mail, email]
+#   display_name:
+#     saml: [displayName, cn, displayname]
+#   given_name:
+#     saml: [givenName, givenname, firstName]
+#   sn:
+#     saml: [sn, surname, familyName]
+#   eppn:
+#     saml: [eduPersonPrincipalName, eppn]
+#   pairwise-id:
+#     saml: [pairwise-id]
+#   persistent-id:
+#     saml: [eduPersonTargetedID, persistent-id]
+#   subject-id:
+#     saml: [pairwise-id, subject-id]
+
+# user_id_from_attrs: [uid]
+# hash_id: "sha256"
+
 attributes:
   uid:
     saml: [pairwise-id]
   mail:
-    saml: [mail, email]
+    saml: [mail]
   display_name:
-    saml: [displayName, cn, displayname]
+    saml: [displayName]
   given_name:
-    saml: [givenName, givenname, firstName]
+    saml: [givenName]
   sn:
-    saml: [sn, surname, familyName]
+    saml: [sn]
   eppn:
-    saml: [eduPersonPrincipalName, eppn]
+    saml: [eduPersonPrincipalName]
   pairwise-id:
     saml: [pairwise-id]
   persistent-id:
-    saml: [eduPersonTargetedID, persistent-id]
+    saml: [eduPersonTargetedID]
   subject-id:
-    saml: [pairwise-id, subject-id]
+    saml: [pairwise-id]
 
 user_id_from_attrs: [uid]
 hash_id: "sha256"
