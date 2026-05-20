@@ -4,7 +4,7 @@ services:
     container_name: ihep-proxy-test
     user: root
     ports:
-      - "127.0.0.1:18080:8080"
+      - "18080:8080"
     volumes:
       - ./etc:/opt/satosa/etc
       - ./plugins:/opt/satosa/plugins

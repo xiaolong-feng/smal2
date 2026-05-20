@@ -1,4 +1,4 @@
-BASE: "http://10.10.0.26:8080"
+BASE: "https://10.10.0.26"
 NAME: "IHEP-SATOSA"
 STATE_ENCRYPTION_KEY: "IHEP_SECRET_123"
 USER_ID_HASH_SALT: "IHEP_SALT_123"
@@ -7,7 +7,10 @@ INTERNAL_ATTRIBUTES: "/opt/satosa/etc/internal_attributes.yaml"
 COOKIE_STATE_NAME: "satosa_state"
 COOKIE_SECURE: true
 COOKIE_HTTPONLY: true
-# COOKIE_SAMESITE: None
+COOKIE_SAMESITE: None
+
+BEHIND_REVERSE_PROXY: true
+
 PLUGIN_PATHS:
   - "/opt/satosa/plugins/frontends"
   - "/opt/satosa/plugins/backends"

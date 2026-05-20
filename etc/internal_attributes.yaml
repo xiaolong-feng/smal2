@@ -1,16 +1,22 @@
 attributes:
   uid:
-    saml: [uid, eduPersonPrincipalName, persistent-id]
+    saml: [pairwise-id]
   mail:
-    saml: [mail]
+    saml: [mail, email]
   display_name:
-    saml: [displayName, cn]
+    saml: [displayName, cn, displayname]
   given_name:
-    saml: [givenName]
+    saml: [givenName, givenname, firstName]
   sn:
-    saml: [sn, surname]
+    saml: [sn, surname, familyName]
   eppn:
-    saml: [eduPersonPrincipalName]
+    saml: [eduPersonPrincipalName, eppn]
+  pairwise-id:
+    saml: [pairwise-id]
+  persistent-id:
+    saml: [eduPersonTargetedID, persistent-id]
+  subject-id:
+    saml: [pairwise-id, subject-id]
 
-user_id_from_attrs: [eppn, uid, mailuid]
+user_id_from_attrs: [uid]
 hash_id: "sha256"
