@@ -1,0 +1,11 @@
+{
+  "oidc-test-app": {
+    "response_types": [
+      "code"
+    ],
+    "redirect_uris": [
+      "http://localhost:18080/callback"
+    ],
+    "client_secret": "test-secret"
+  }
+}

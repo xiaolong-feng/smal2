@@ -1,0 +1,20 @@
+services:
+  satosa:
+    environment:
+      SATOSA_CONFIG: "/opt/satosa/etc/proxy_conf.oidc.yaml"
+
+  oidc-test-app:
+    build: ./oidc-test-app
+    container_name: oidc-test-app
+    ports:
+      - "18080:8080"
+    environment:
+      OIDC_ISSUER: "${SATOSA_PUBLIC_BASE:-https://10.10.0.26}"
+      OIDC_DISCOVERY_URL: "https://satosa/.well-known/openid-configuration"
+      OIDC_TOKEN_ENDPOINT: "https://satosa/OIDCFrontend/token"
+      OIDC_USERINFO_ENDPOINT: "https://satosa/OIDCFrontend/userinfo"
+      OIDC_CLIENT_ID: "oidc-test-app"
+      OIDC_CLIENT_SECRET: "test-secret"
+      OIDC_REDIRECT_URI: "http://localhost:18080/callback"
+      OIDC_SCOPE: "openid profile email"
+      OIDC_VERIFY_TLS: "false"

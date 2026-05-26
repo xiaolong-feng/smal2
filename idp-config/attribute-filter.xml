@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AttributeFilterPolicyGroup id="ShibbolethFilterPolicy"
+        xmlns="urn:mace:shibboleth:2.0:afp"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
+
+    <!--
+        Default policy for existing services.
+
+        Important: SATOSA is excluded here. Otherwise SATOSA would receive both
+        email and mail from this broad policy and then also receive mail from the
+        SATOSA-specific policy below, producing duplicate mail values.
+    -->
+    <AttributeFilterPolicy id="idpcarsidefault">
+        <PolicyRequirementRule xsi:type="NOT">
+            <Rule xsi:type="Requester" value="https://10.10.0.26/sp" />
+        </PolicyRequirementRule>
+
+        <AttributeRule attributeID="eduPersonScopedAffiliation" permitAny="true"/>
+        <AttributeRule attributeID="eduPersonEntitlement" permitAny="true"/>
+        <AttributeRule attributeID="eduPersonTargetedID" permitAny="true"/>
+        <AttributeRule attributeID="samlPairwiseID" permitAny="true"/>
+        <AttributeRule attributeID="email" permitAny="true"/>
+        <AttributeRule attributeID="mail" permitAny="true"/>
+        <AttributeRule attributeID="givenName" permitAny="true"/>
+        <AttributeRule attributeID="surname" permitAny="true"/>
+        <AttributeRule attributeID="sn" permitAny="true"/>
+        <AttributeRule attributeID="eduPersonPrincipalName" permitAny="true"/>
+        <AttributeRule attributeID="uid" permitAny="true"/>
+    </AttributeFilterPolicy>
+
+    <!--
+        SATOSA proxy SP.
+
+        Keep this intentionally small. In particular, do not release both
+        "email" and "mail" to SATOSA, because both can encode to the same SAML
+        mail OID and produce duplicate values downstream in Indico.
+    -->
+    <AttributeFilterPolicy id="SATOSAProxyPolicy">
+        <PolicyRequirementRule xsi:type="Requester" value="https://10.10.0.26/sp" />
+
+        <AttributeRule attributeID="samlPairwiseID" permitAny="true"/>
+        <AttributeRule attributeID="eduPersonTargetedID" permitAny="true"/>
+        <AttributeRule attributeID="mail" permitAny="true"/>
+        <AttributeRule attributeID="eduPersonPrincipalName" permitAny="true"/>
+    </AttributeFilterPolicy>
+
+    <AttributeFilterPolicy id="ihepdefault">
+        <PolicyRequirementRule xsi:type="OR">
+            <Rule xsi:type="Requester" value="https://indico3-ldap.ihep.ac.cn/shibboleth" />
+            <Rule xsi:type="Requester" value="https://twikinew.ihep.ac.cn/shibboleth" />
+        </PolicyRequirementRule>
+        <AttributeRule attributeID="eduPersonTargetedID">
+            <PermitValueRule xsi:type="NOT">
+                <Rule xsi:type="Requester" value="https://indico3-ldap.ihep.ac.cn/shibboleth" />
+            </PermitValueRule>
+        </AttributeRule>
+    </AttributeFilterPolicy>
+
+    <AttributeFilterPolicy id="IAMAttrFilterPolicy">
+        <PolicyRequirementRule xsi:type="OR">
+            <Rule xsi:type="Requester" value="https://badger01.ihep.ac.cn/shibboleth" />
+        </PolicyRequirementRule>
+        <AttributeRule attributeID="eduPersonUniqueId" permitAny="true" />
+    </AttributeFilterPolicy>
+
+    <AttributeFilterPolicy id="indicoAttrFilterPolicy">
+        <PolicyRequirementRule xsi:type="OR">
+            <Rule xsi:type="Requester" value="https://indico.ihep.ac.cn/shibboleth" />
+        </PolicyRequirementRule>
+        <AttributeRule attributeID="sn" permitAny="true" />
+        <AttributeRule attributeID="trueName" permitAny="true" />
+        <AttributeRule attributeID="cstnetId" permitAny="true" />
+        <AttributeRule attributeID="cn" permitAny="true" />
+        <AttributeRule attributeID="email" permitAny="true" />
+        <AttributeRule attributeID="firstName" permitAny="true" />
+        <AttributeRule attributeID="lastName" permitAny="true" />
+        <AttributeRule attributeID="sex" permitAny="true" />
+        <AttributeRule attributeID="dateBrith" permitAny="true" />
+        <AttributeRule attributeID="state" permitAny="true" />
+        <AttributeRule attributeID="duty" permitAny="true" />
+        <AttributeRule attributeID="jobTitle" permitAny="true" />
+        <AttributeRule attributeID="department" permitAny="true" />
+        <AttributeRule attributeID="group" permitAny="true" />
+        <AttributeRule attributeID="otherEmail" permitAny="true" />
+        <AttributeRule attributeID="conmanyPhone" permitAny="true" />
+        <AttributeRule attributeID="address" permitAny="true" />
+        <AttributeRule attributeID="createTime" permitAny="true" />
+        <AttributeRule attributeID="units" permitAny="true" />
+        <AttributeRule attributeID="coopers" permitAny="true" />
+        <AttributeRule attributeID="groups" permitAny="true" />
+        <AttributeRule attributeID="orgUnitId" permitAny="true" />
+        <AttributeRule attributeID="userType" permitAny="true" />
+    </AttributeFilterPolicy>
+
+    <AttributeFilterPolicy id="aaiAttrFilterPolicy">
+        <PolicyRequirementRule xsi:type="OR">
+            <Rule xsi:type="Requester" value="https://aai.cstcloud.net/saml/sp" />
+        </PolicyRequirementRule>
+        <AttributeRule attributeID="cstnetId" permitAny="true" />
+        <AttributeRule attributeID="trueName" permitAny="true" />
+    </AttributeFilterPolicy>
+
+    <AttributeFilterPolicy id="RS">
+        <PolicyRequirementRule xsi:type="EntityAttributeExactMatch"
+            attributeName="http://macedir.org/entity-category"
+            attributeValue="http://refeds.org/category/research-and-scholarship" />
+        <AttributeRule attributeID="persistentId" permitAny="true"/>
+        <AttributeRule attributeID="mail" permitAny="true"/>
+        <AttributeRule attributeID="givenName" permitAny="true"/>
+        <AttributeRule attributeID="sn" permitAny="true"/>
+        <AttributeRule attributeID="eduPersonPrincipalName" permitAny="true"/>
+    </AttributeFilterPolicy>
+
+    <AttributeFilterPolicy id="IAMJUNOPolicy">
+        <PolicyRequirementRule xsi:type="OR">
+            <Rule xsi:type="Requester" value="https://iam-juno.cloud.cnaf.infn.it" />
+        </PolicyRequirementRule>
+        <AttributeRule attributeID="email" permitAny="true" />
+        <AttributeRule attributeID="givenName" permitAny="true"/>
+        <AttributeRule attributeID="surname" permitAny="true"/>
+        <AttributeRule attributeID="eduPersonPrincipalName" permitAny="true"/>
+        <AttributeRule attributeID="eduPersonUniqueId" permitAny="true" />
+    </AttributeFilterPolicy>
+
+    <AttributeFilterPolicy id="indicoAttrFilterPolicy3">
+        <PolicyRequirementRule xsi:type="OR">
+            <Rule xsi:type="Requester" value="https://indico3.ihep.ac.cn/shibboleth" />
+        </PolicyRequirementRule>
+        <AttributeRule attributeID="sn" permitAny="true" />
+        <AttributeRule attributeID="trueName" permitAny="true" />
+        <AttributeRule attributeID="cstnetId" permitAny="true" />
+        <AttributeRule attributeID="cn" permitAny="true" />
+        <AttributeRule attributeID="email" permitAny="true" />
+        <AttributeRule attributeID="firstName" permitAny="true" />
+        <AttributeRule attributeID="lastName" permitAny="true" />
+        <AttributeRule attributeID="sex" permitAny="true" />
+        <AttributeRule attributeID="dateBrith" permitAny="true" />
+        <AttributeRule attributeID="state" permitAny="true" />
+        <AttributeRule attributeID="duty" permitAny="true" />
+        <AttributeRule attributeID="jobTitle" permitAny="true" />
+        <AttributeRule attributeID="department" permitAny="true" />
+        <AttributeRule attributeID="group" permitAny="true" />
+        <AttributeRule attributeID="otherEmail" permitAny="true" />
+        <AttributeRule attributeID="conmanyPhone" permitAny="true" />
+        <AttributeRule attributeID="address" permitAny="true" />
+        <AttributeRule attributeID="createTime" permitAny="true" />
+        <AttributeRule attributeID="units" permitAny="true" />
+        <AttributeRule attributeID="coopers" permitAny="true" />
+        <AttributeRule attributeID="groups" permitAny="true" />
+        <AttributeRule attributeID="orgUnitId" permitAny="true" />
+        <AttributeRule attributeID="userType" permitAny="true" />
+    </AttributeFilterPolicy>
+
+    <AttributeFilterPolicy id="indicoAttrFilterPolicyprod">
+        <PolicyRequirementRule xsi:type="OR">
+            <Rule xsi:type="Requester" value="https://indico3-prod.ihep.ac.cn/shibboleth" />
+        </PolicyRequirementRule>
+        <AttributeRule attributeID="sn" permitAny="true" />
+        <AttributeRule attributeID="trueName" permitAny="true" />
+        <AttributeRule attributeID="cstnetId" permitAny="true" />
+        <AttributeRule attributeID="cn" permitAny="true" />
+        <AttributeRule attributeID="email" permitAny="true" />
+        <AttributeRule attributeID="firstName" permitAny="true" />
+        <AttributeRule attributeID="lastName" permitAny="true" />
+        <AttributeRule attributeID="sex" permitAny="true" />
+        <AttributeRule attributeID="dateBrith" permitAny="true" />
+        <AttributeRule attributeID="state" permitAny="true" />
+        <AttributeRule attributeID="duty" permitAny="true" />
+        <AttributeRule attributeID="jobTitle" permitAny="true" />
+        <AttributeRule attributeID="department" permitAny="true" />
+        <AttributeRule attributeID="group" permitAny="true" />
+        <AttributeRule attributeID="otherEmail" permitAny="true" />
+        <AttributeRule attributeID="conmanyPhone" permitAny="true" />
+        <AttributeRule attributeID="address" permitAny="true" />
+        <AttributeRule attributeID="createTime" permitAny="true" />
+        <AttributeRule attributeID="units" permitAny="true" />
+        <AttributeRule attributeID="coopers" permitAny="true" />
+        <AttributeRule attributeID="groups" permitAny="true" />
+        <AttributeRule attributeID="orgUnitId" permitAny="true" />
+        <AttributeRule attributeID="userType" permitAny="true" />
+    </AttributeFilterPolicy>
+
+    <AttributeFilterPolicy id="indicoAttrFilterPolicy3test">
+        <PolicyRequirementRule xsi:type="OR">
+            <Rule xsi:type="Requester" value="https://indico3-ldap.ihep.ac.cn/shibboleth" />
+        </PolicyRequirementRule>
+        <AttributeRule attributeID="sn" permitAny="true" />
+        <AttributeRule attributeID="trueName" permitAny="true" />
+        <AttributeRule attributeID="cstnetId" permitAny="true" />
+        <AttributeRule attributeID="cn" permitAny="true" />
+        <AttributeRule attributeID="email" permitAny="true" />
+        <AttributeRule attributeID="firstName" permitAny="true" />
+        <AttributeRule attributeID="lastName" permitAny="true" />
+        <AttributeRule attributeID="sex" permitAny="true" />
+        <AttributeRule attributeID="dateBrith" permitAny="true" />
+        <AttributeRule attributeID="state" permitAny="true" />
+        <AttributeRule attributeID="duty" permitAny="true" />
+        <AttributeRule attributeID="jobTitle" permitAny="true" />
+        <AttributeRule attributeID="department" permitAny="true" />
+        <AttributeRule attributeID="group" permitAny="true" />
+        <AttributeRule attributeID="otherEmail" permitAny="true" />
+        <AttributeRule attributeID="conmanyPhone" permitAny="true" />
+        <AttributeRule attributeID="address" permitAny="true" />
+        <AttributeRule attributeID="createTime" permitAny="true" />
+        <AttributeRule attributeID="units" permitAny="true" />
+        <AttributeRule attributeID="coopers" permitAny="true" />
+        <AttributeRule attributeID="groups" permitAny="true" />
+        <AttributeRule attributeID="orgUnitId" permitAny="true" />
+        <AttributeRule attributeID="userType" permitAny="true" />
+    </AttributeFilterPolicy>
+
+    <AttributeFilterPolicy id="indicoAttrFilterPolicysp1">
+        <PolicyRequirementRule xsi:type="OR">
+            <Rule xsi:type="Requester" value="https://sp1.ihep.ac.cn/shibboleth" />
+        </PolicyRequirementRule>
+        <AttributeRule attributeID="sn" permitAny="true" />
+        <AttributeRule attributeID="trueName" permitAny="true" />
+        <AttributeRule attributeID="cstnetId" permitAny="true" />
+        <AttributeRule attributeID="cn" permitAny="true" />
+        <AttributeRule attributeID="email" permitAny="true" />
+        <AttributeRule attributeID="firstName" permitAny="true" />
+        <AttributeRule attributeID="lastName" permitAny="true" />
+        <AttributeRule attributeID="sex" permitAny="true" />
+        <AttributeRule attributeID="dateBrith" permitAny="true" />
+        <AttributeRule attributeID="state" permitAny="true" />
+        <AttributeRule attributeID="duty" permitAny="true" />
+        <AttributeRule attributeID="jobTitle" permitAny="true" />
+        <AttributeRule attributeID="department" permitAny="true" />
+        <AttributeRule attributeID="group" permitAny="true" />
+        <AttributeRule attributeID="otherEmail" permitAny="true" />
+        <AttributeRule attributeID="conmanyPhone" permitAny="true" />
+        <AttributeRule attributeID="address" permitAny="true" />
+        <AttributeRule attributeID="createTime" permitAny="true" />
+        <AttributeRule attributeID="units" permitAny="true" />
+        <AttributeRule attributeID="coopers" permitAny="true" />
+        <AttributeRule attributeID="groups" permitAny="true" />
+        <AttributeRule attributeID="orgUnitId" permitAny="true" />
+        <AttributeRule attributeID="userType" permitAny="true" />
+    </AttributeFilterPolicy>
+
+    <AttributeFilterPolicy id="DS">
+        <PolicyRequirementRule xsi:type="OR">
+            <Rule xsi:type="Requester" value="https://192.168.14.50/shibboleth" />
+        </PolicyRequirementRule>
+        <AttributeRule attributeID="sn" permitAny="true" />
+        <AttributeRule attributeID="trueName" permitAny="true" />
+        <AttributeRule attributeID="cstnetId" permitAny="true" />
+        <AttributeRule attributeID="cn" permitAny="true" />
+        <AttributeRule attributeID="email" permitAny="true" />
+        <AttributeRule attributeID="firstName" permitAny="true" />
+        <AttributeRule attributeID="lastName" permitAny="true" />
+        <AttributeRule attributeID="sex" permitAny="true" />
+        <AttributeRule attributeID="dateBrith" permitAny="true" />
+        <AttributeRule attributeID="state" permitAny="true" />
+        <AttributeRule attributeID="duty" permitAny="true" />
+        <AttributeRule attributeID="jobTitle" permitAny="true" />
+        <AttributeRule attributeID="department" permitAny="true" />
+        <AttributeRule attributeID="group" permitAny="true" />
+        <AttributeRule attributeID="otherEmail" permitAny="true" />
+        <AttributeRule attributeID="conmanyPhone" permitAny="true" />
+        <AttributeRule attributeID="address" permitAny="true" />
+        <AttributeRule attributeID="createTime" permitAny="true" />
+        <AttributeRule attributeID="units" permitAny="true" />
+        <AttributeRule attributeID="coopers" permitAny="true" />
+        <AttributeRule attributeID="groups" permitAny="true" />
+        <AttributeRule attributeID="orgUnitId" permitAny="true" />
+        <AttributeRule attributeID="userType" permitAny="true" />
+    </AttributeFilterPolicy>
+
+    <AttributeFilterPolicy id="KeycloakMetadata">
+        <PolicyRequirementRule xsi:type="OR">
+            <Rule xsi:type="Requester" value="http://192.168.15.184:8080/realms/master" />
+        </PolicyRequirementRule>
+        <AttributeRule attributeID="sn" permitAny="true" />
+        <AttributeRule attributeID="trueName" permitAny="true" />
+        <AttributeRule attributeID="cstnetId" permitAny="true" />
+        <AttributeRule attributeID="cn" permitAny="true" />
+        <AttributeRule attributeID="email" permitAny="true" />
+        <AttributeRule attributeID="firstName" permitAny="true" />
+        <AttributeRule attributeID="lastName" permitAny="true" />
+        <AttributeRule attributeID="sex" permitAny="true" />
+        <AttributeRule attributeID="dateBrith" permitAny="true" />
+        <AttributeRule attributeID="state" permitAny="true" />
+        <AttributeRule attributeID="duty" permitAny="true" />
+        <AttributeRule attributeID="jobTitle" permitAny="true" />
+        <AttributeRule attributeID="department" permitAny="true" />
+        <AttributeRule attributeID="group" permitAny="true" />
+        <AttributeRule attributeID="otherEmail" permitAny="true" />
+        <AttributeRule attributeID="conmanyPhone" permitAny="true" />
+        <AttributeRule attributeID="address" permitAny="true" />
+        <AttributeRule attributeID="createTime" permitAny="true" />
+        <AttributeRule attributeID="units" permitAny="true" />
+        <AttributeRule attributeID="coopers" permitAny="true" />
+        <AttributeRule attributeID="groups" permitAny="true" />
+        <AttributeRule attributeID="orgUnitId" permitAny="true" />
+        <AttributeRule attributeID="userType" permitAny="true" />
+    </AttributeFilterPolicy>
+
+    <AttributeFilterPolicy id="KeycloakMetadata2">
+        <PolicyRequirementRule xsi:type="OR">
+            <Rule xsi:type="Requester" value="http://192.168.32.85:8104/realms/master" />
+        </PolicyRequirementRule>
+        <AttributeRule attributeID="sn" permitAny="true" />
+        <AttributeRule attributeID="trueName" permitAny="true" />
+        <AttributeRule attributeID="cstnetId" permitAny="true" />
+        <AttributeRule attributeID="cn" permitAny="true" />
+        <AttributeRule attributeID="email" permitAny="true" />
+        <AttributeRule attributeID="firstName" permitAny="true" />
+        <AttributeRule attributeID="lastName" permitAny="true" />
+        <AttributeRule attributeID="sex" permitAny="true" />
+        <AttributeRule attributeID="dateBrith" permitAny="true" />
+        <AttributeRule attributeID="state" permitAny="true" />
+        <AttributeRule attributeID="duty" permitAny="true" />
+        <AttributeRule attributeID="jobTitle" permitAny="true" />
+        <AttributeRule attributeID="department" permitAny="true" />
+        <AttributeRule attributeID="group" permitAny="true" />
+        <AttributeRule attributeID="otherEmail" permitAny="true" />
+        <AttributeRule attributeID="conmanyPhone" permitAny="true" />
+        <AttributeRule attributeID="address" permitAny="true" />
+        <AttributeRule attributeID="createTime" permitAny="true" />
+        <AttributeRule attributeID="units" permitAny="true" />
+        <AttributeRule attributeID="coopers" permitAny="true" />
+        <AttributeRule attributeID="groups" permitAny="true" />
+        <AttributeRule attributeID="orgUnitId" permitAny="true" />
+        <AttributeRule attributeID="userType" permitAny="true" />
+    </AttributeFilterPolicy>
+
+    <AttributeFilterPolicy id="KeycloakMetadata3">
+        <PolicyRequirementRule xsi:type="OR">
+            <Rule xsi:type="Requester" value="http://192.168.32.85:8104/realms/samltest" />
+        </PolicyRequirementRule>
+        <AttributeRule attributeID="sn" permitAny="true" />
+        <AttributeRule attributeID="trueName" permitAny="true" />
+        <AttributeRule attributeID="cstnetId" permitAny="true" />
+        <AttributeRule attributeID="cn" permitAny="true" />
+        <AttributeRule attributeID="email" permitAny="true" />
+        <AttributeRule attributeID="firstName" permitAny="true" />
+        <AttributeRule attributeID="lastName" permitAny="true" />
+        <AttributeRule attributeID="sex" permitAny="true" />
+        <AttributeRule attributeID="dateBrith" permitAny="true" />
+        <AttributeRule attributeID="state" permitAny="true" />
+        <AttributeRule attributeID="duty" permitAny="true" />
+        <AttributeRule attributeID="jobTitle" permitAny="true" />
+        <AttributeRule attributeID="department" permitAny="true" />
+        <AttributeRule attributeID="group" permitAny="true" />
+        <AttributeRule attributeID="otherEmail" permitAny="true" />
+        <AttributeRule attributeID="conmanyPhone" permitAny="true" />
+        <AttributeRule attributeID="address" permitAny="true" />
+        <AttributeRule attributeID="createTime" permitAny="true" />
+        <AttributeRule attributeID="units" permitAny="true" />
+        <AttributeRule attributeID="coopers" permitAny="true" />
+        <AttributeRule attributeID="groups" permitAny="true" />
+        <AttributeRule attributeID="orgUnitId" permitAny="true" />
+        <AttributeRule attributeID="userType" permitAny="true" />
+    </AttributeFilterPolicy>
+
+    <AttributeFilterPolicy id="KeycloakMetadata4">
+        <PolicyRequirementRule xsi:type="OR">
+            <Rule xsi:type="Requester" value="https://10.5.127.34/realms/master" />
+        </PolicyRequirementRule>
+        <AttributeRule attributeID="sn" permitAny="true" />
+        <AttributeRule attributeID="trueName" permitAny="true" />
+        <AttributeRule attributeID="cstnetId" permitAny="true" />
+        <AttributeRule attributeID="cn" permitAny="true" />
+        <AttributeRule attributeID="email" permitAny="true" />
+        <AttributeRule attributeID="firstName" permitAny="true" />
+        <AttributeRule attributeID="lastName" permitAny="true" />
+        <AttributeRule attributeID="sex" permitAny="true" />
+        <AttributeRule attributeID="dateBrith" permitAny="true" />
+        <AttributeRule attributeID="state" permitAny="true" />
+        <AttributeRule attributeID="duty" permitAny="true" />
+        <AttributeRule attributeID="jobTitle" permitAny="true" />
+        <AttributeRule attributeID="department" permitAny="true" />
+        <AttributeRule attributeID="group" permitAny="true" />
+        <AttributeRule attributeID="otherEmail" permitAny="true" />
+        <AttributeRule attributeID="conmanyPhone" permitAny="true" />
+        <AttributeRule attributeID="address" permitAny="true" />
+        <AttributeRule attributeID="createTime" permitAny="true" />
+        <AttributeRule attributeID="units" permitAny="true" />
+        <AttributeRule attributeID="coopers" permitAny="true" />
+        <AttributeRule attributeID="groups" permitAny="true" />
+        <AttributeRule attributeID="orgUnitId" permitAny="true" />
+        <AttributeRule attributeID="userType" permitAny="true" />
+    </AttributeFilterPolicy>
+
+    <AttributeFilterPolicy id="KeycloakMetadata5">
+        <PolicyRequirementRule xsi:type="OR">
+            <Rule xsi:type="Requester" value="http://192.168.15.184:8080/realms/samltest" />
+        </PolicyRequirementRule>
+        <AttributeRule attributeID="sn" permitAny="true" />
+        <AttributeRule attributeID="trueName" permitAny="true" />
+        <AttributeRule attributeID="cstnetId" permitAny="true" />
+        <AttributeRule attributeID="cn" permitAny="true" />
+        <AttributeRule attributeID="email" permitAny="true" />
+        <AttributeRule attributeID="firstName" permitAny="true" />
+        <AttributeRule attributeID="lastName" permitAny="true" />
+        <AttributeRule attributeID="sex" permitAny="true" />
+        <AttributeRule attributeID="dateBrith" permitAny="true" />
+        <AttributeRule attributeID="state" permitAny="true" />
+        <AttributeRule attributeID="duty" permitAny="true" />
+        <AttributeRule attributeID="jobTitle" permitAny="true" />
+        <AttributeRule attributeID="department" permitAny="true" />
+        <AttributeRule attributeID="group" permitAny="true" />
+        <AttributeRule attributeID="otherEmail" permitAny="true" />
+        <AttributeRule attributeID="conmanyPhone" permitAny="true" />
+        <AttributeRule attributeID="address" permitAny="true" />
+        <AttributeRule attributeID="createTime" permitAny="true" />
+        <AttributeRule attributeID="units" permitAny="true" />
+        <AttributeRule attributeID="coopers" permitAny="true" />
+        <AttributeRule attributeID="groups" permitAny="true" />
+        <AttributeRule attributeID="orgUnitId" permitAny="true" />
+        <AttributeRule attributeID="userType" permitAny="true" />
+    </AttributeFilterPolicy>
+
+    <AttributeFilterPolicy id="KeycloakMetadata6">
+        <PolicyRequirementRule xsi:type="OR">
+            <Rule xsi:type="Requester" value="https://10.5.127.34/realms/samltest" />
+        </PolicyRequirementRule>
+        <AttributeRule attributeID="sn" permitAny="true" />
+        <AttributeRule attributeID="trueName" permitAny="true" />
+        <AttributeRule attributeID="cstnetId" permitAny="true" />
+        <AttributeRule attributeID="cn" permitAny="true" />
+        <AttributeRule attributeID="email" permitAny="true" />
+        <AttributeRule attributeID="firstName" permitAny="true" />
+        <AttributeRule attributeID="lastName" permitAny="true" />
+        <AttributeRule attributeID="sex" permitAny="true" />
+        <AttributeRule attributeID="dateBrith" permitAny="true" />
+        <AttributeRule attributeID="state" permitAny="true" />
+        <AttributeRule attributeID="duty" permitAny="true" />
+        <AttributeRule attributeID="jobTitle" permitAny="true" />
+        <AttributeRule attributeID="department" permitAny="true" />
+        <AttributeRule attributeID="group" permitAny="true" />
+        <AttributeRule attributeID="otherEmail" permitAny="true" />
+        <AttributeRule attributeID="conmanyPhone" permitAny="true" />
+        <AttributeRule attributeID="address" permitAny="true" />
+        <AttributeRule attributeID="createTime" permitAny="true" />
+        <AttributeRule attributeID="units" permitAny="true" />
+        <AttributeRule attributeID="coopers" permitAny="true" />
+        <AttributeRule attributeID="groups" permitAny="true" />
+        <AttributeRule attributeID="orgUnitId" permitAny="true" />
+        <AttributeRule attributeID="userType" permitAny="true" />
+    </AttributeFilterPolicy>
+
+    <AttributeFilterPolicy id="luoq">
+        <PolicyRequirementRule xsi:type="OR">
+            <Rule xsi:type="Requester" value="http://luoqtest.ihep.ac.cn/shibboleth" />
+        </PolicyRequirementRule>
+        <AttributeRule attributeID="sn" permitAny="true" />
+        <AttributeRule attributeID="trueName" permitAny="true" />
+        <AttributeRule attributeID="cstnetId" permitAny="true" />
+        <AttributeRule attributeID="cn" permitAny="true" />
+        <AttributeRule attributeID="email" permitAny="true" />
+        <AttributeRule attributeID="firstName" permitAny="true" />
+        <AttributeRule attributeID="lastName" permitAny="true" />
+        <AttributeRule attributeID="sex" permitAny="true" />
+        <AttributeRule attributeID="dateBrith" permitAny="true" />
+        <AttributeRule attributeID="state" permitAny="true" />
+        <AttributeRule attributeID="duty" permitAny="true" />
+        <AttributeRule attributeID="jobTitle" permitAny="true" />
+        <AttributeRule attributeID="department" permitAny="true" />
+        <AttributeRule attributeID="group" permitAny="true" />
+        <AttributeRule attributeID="otherEmail" permitAny="true" />
+        <AttributeRule attributeID="conmanyPhone" permitAny="true" />
+        <AttributeRule attributeID="address" permitAny="true" />
+        <AttributeRule attributeID="createTime" permitAny="true" />
+        <AttributeRule attributeID="units" permitAny="true" />
+        <AttributeRule attributeID="coopers" permitAny="true" />
+        <AttributeRule attributeID="groups" permitAny="true" />
+        <AttributeRule attributeID="orgUnitId" permitAny="true" />
+        <AttributeRule attributeID="userType" permitAny="true" />
+    </AttributeFilterPolicy>
+
+</AttributeFilterPolicyGroup>

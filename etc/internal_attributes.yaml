@@ -24,16 +24,22 @@
 attributes:
   uid:
     saml: [pairwise-id]
+    openid: [sub]
   mail:
     saml: [mail]
+    openid: [email]
   display_name:
     saml: [displayName]
+    openid: [name]
   given_name:
     saml: [givenName]
+    openid: [given_name]
   sn:
     saml: [sn]
+    openid: [family_name]
   eppn:
     saml: [eduPersonPrincipalName]
+    openid: [preferred_username]
   pairwise-id:
     saml: [pairwise-id]
   persistent-id:

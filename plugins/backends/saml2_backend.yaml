@@ -2,12 +2,13 @@ module: satosa.backends.saml2.SAMLBackend
 name: Saml2Backend
 config:
   sp_config:
-    entityid: "https://10.10.14.167/sp"
+    entityid: "https://10.10.0.26/sp"
     name: "SATOSA SP"
 
     key_file: "/opt/satosa/pki/satosa.key"
     cert_file: "/opt/satosa/pki/satosa.crt"
     xmlsec_binary: /usr/bin/xmlsec1
+    accepted_time_diff: 60
 
     metadata:
       local:
@@ -22,7 +23,7 @@ config:
 
         endpoints:
           assertion_consumer_service:
-            - - "https://10.10.14.167/Saml2Backend/saml2/acs"
+            - - "https://10.10.0.26/Saml2Backend/saml2/acs"
               - "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
 
         name_id_policy_format: "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"

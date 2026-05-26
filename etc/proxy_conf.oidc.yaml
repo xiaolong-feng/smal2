@@ -1,5 +1,5 @@
 BASE: "https://10.10.0.26"
-NAME: "IHEP-SATOSA"
+NAME: "IHEP-SATOSA-OIDC-Test"
 STATE_ENCRYPTION_KEY: "IHEP_SECRET_123"
 USER_ID_HASH_SALT: "IHEP_SALT_123"
 
@@ -17,6 +17,7 @@ PLUGIN_PATHS:
 
 FRONTEND_MODULES:
   - "/opt/satosa/plugins/frontends/saml2_frontend.yaml"
+  - "/opt/satosa/plugins/frontends/oidc_frontend.yaml"
 
 BACKEND_MODULES:
   - "/opt/satosa/plugins/backends/saml2_backend.yaml"
