@@ -27,7 +27,6 @@ BACKEND_MODULES:
 
 MICRO_SERVICES:
   - "/opt/satosa/plugins/micro_services/normalize_attributes.yaml"
-  - "/opt/satosa/plugins/micro_services/save_user_attributes.yaml"
 
 LOGGING:
   version: 1

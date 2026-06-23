@@ -13,21 +13,24 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 
 ISSUER = os.getenv("OIDC_ISSUER", "https://10.10.0.26").rstrip("/")
-DISCOVERY_URL = os.getenv("OIDC_DISCOVERY_URL", f"{ISSUER}/.well-known/openid-configuration")
+DISCOVERY_URL = os.getenv(
+    "OIDC_DISCOVERY_URL", f"{ISSUER}/.well-known/openid-configuration"
+)
 CLIENT_ID = os.getenv("OIDC_CLIENT_ID", "oidc-test-app")
 CLIENT_SECRET = os.getenv("OIDC_CLIENT_SECRET", "test-secret")
 REDIRECT_URI = os.getenv("OIDC_REDIRECT_URI", "http://localhost:18080/callback")
 SCOPE = os.getenv("OIDC_SCOPE", "openid profile email")
 PORT = int(os.getenv("PORT", "8080"))
-VERIFY_TLS = os.getenv("OIDC_VERIFY_TLS", "false").lower() in {"1", "true", "yes", "on"}
+VERIFY_TLS = os.getenv("OIDC_VERIFY_TLS", "false").lower() in {
+    "1",
+    "true",
+    "yes",
+    "on",
+}
 
 AUTHORIZATION_ENDPOINT = os.getenv("OIDC_AUTHORIZATION_ENDPOINT")
 TOKEN_ENDPOINT = os.getenv("OIDC_TOKEN_ENDPOINT")
 USERINFO_ENDPOINT = os.getenv("OIDC_USERINFO_ENDPOINT")
-SAVED_USER_ATTRIBUTES_PATH = os.getenv(
-    "SAVED_USER_ATTRIBUTES_PATH", "/opt/satosa/data/user_attributes.jsonl"
-)
-SAVED_USER_ATTRIBUTES_LIMIT = int(os.getenv("SAVED_USER_ATTRIBUTES_LIMIT", "5"))
 
 COOKIE_NAME = "oidc_test_state"
 
@@ -52,7 +55,8 @@ def discovery():
     metadata = json_request(DISCOVERY_URL)
     return {
         "issuer": metadata.get("issuer", ISSUER),
-        "authorization_endpoint": AUTHORIZATION_ENDPOINT or metadata["authorization_endpoint"],
+        "authorization_endpoint": AUTHORIZATION_ENDPOINT
+        or metadata["authorization_endpoint"],
         "token_endpoint": TOKEN_ENDPOINT or metadata["token_endpoint"],
         "userinfo_endpoint": USERINFO_ENDPOINT or metadata.get("userinfo_endpoint"),
         "raw": metadata,
@@ -79,93 +83,6 @@ def render_json(value):
     return html.escape(json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True))
 
 
-def read_saved_user_records(limit=SAVED_USER_ATTRIBUTES_LIMIT):
-    if not os.path.exists(SAVED_USER_ATTRIBUTES_PATH):
-        return [], None
-
-    try:
-        with open(SAVED_USER_ATTRIBUTES_PATH, encoding="utf-8") as saved_file:
-            lines = [line.strip() for line in saved_file if line.strip()]
-    except OSError as exc:
-        return [], exc
-
-    records = []
-    error = None
-    for line in reversed(lines[-limit:]):
-        try:
-            records.append(json.loads(line))
-        except json.JSONDecodeError as exc:
-            error = exc
-
-    return records, error
-
-
-def render_attribute_value(value):
-    if isinstance(value, list):
-        return ", ".join(str(item) for item in value)
-    if isinstance(value, dict):
-        return json.dumps(value, ensure_ascii=False, sort_keys=True)
-    return str(value)
-
-
-def render_saved_user_info(records=None, error=None, title="SATOSA 本地保存的用户信息"):
-    if records is None:
-        records, error = read_saved_user_records()
-
-    if error:
-        status = f'<p class="error">读取保存文件失败：{html.escape(str(error))}</p>'
-    elif not records:
-        status = '<p class="warn">还没有读取到保存记录。完成一次登录后，这里会显示 SATOSA 落盘的用户信息。</p>'
-    else:
-        status = ""
-
-    latest = records[0] if records else None
-    if latest:
-        attributes = latest.get("attributes") or {}
-        if attributes:
-            rows = "\n".join(
-                "<tr><th>{0}</th><td>{1}</td></tr>".format(
-                    html.escape(str(name)),
-                    html.escape(render_attribute_value(value)),
-                )
-                for name, value in sorted(attributes.items())
-            )
-            attributes_html = f"""
-  <table class="attributes-table">
-    <tbody>
-{rows}
-    </tbody>
-  </table>
-"""
-        else:
-            attributes_html = '<p class="warn">保存记录里没有 attributes 字段。</p>'
-
-        record_info = f"""
-  <dl>
-    <dt>保存时间</dt><dd>{html.escape(str(latest.get("saved_at", "")))}</dd>
-    <dt>保存服务</dt><dd>{html.escape(str(latest.get("service", "")))}</dd>
-    <dt>记录文件</dt><dd>{html.escape(SAVED_USER_ATTRIBUTES_PATH)}</dd>
-  </dl>
-{attributes_html}
-  <h2>最近保存记录 Raw JSON</h2>
-  <pre>{render_json(latest)}</pre>
-"""
-    else:
-        record_info = f"""
-  <dl>
-    <dt>记录文件</dt><dd>{html.escape(SAVED_USER_ATTRIBUTES_PATH)}</dd>
-  </dl>
-"""
-
-    return f"""
-<h2>{html.escape(title)}</h2>
-<div class="panel">
-{status}
-{record_info}
-</div>
-"""
-
-
 def render_page(title, body, status=HTTPStatus.OK):
     return status, f"""<!doctype html>
 <html lang="zh-CN">
@@ -176,7 +93,7 @@ def render_page(title, body, status=HTTPStatus.OK):
   <style>
     :root {{
       color-scheme: light;
-      font-family: Arial, "Microsoft YaHei", sans-serif;
+      font-family: Arial, sans-serif;
       color: #202124;
       background: #f7f8fa;
     }}
@@ -241,25 +158,6 @@ def render_page(title, body, status=HTTPStatus.OK):
       margin: 0;
       overflow-wrap: anywhere;
     }}
-    .attributes-table {{
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 18px;
-      table-layout: fixed;
-    }}
-    .attributes-table th,
-    .attributes-table td {{
-      border-top: 1px solid #e8eaed;
-      padding: 10px 8px;
-      text-align: left;
-      vertical-align: top;
-      overflow-wrap: anywhere;
-    }}
-    .attributes-table th {{
-      width: 220px;
-      color: #3c4043;
-      font-weight: 700;
-    }}
     pre {{
       overflow: auto;
       background: #111827;
@@ -302,8 +200,6 @@ class OIDCTestHandler(BaseHTTPRequestHandler):
             self.handle_login()
         elif parsed.path == "/callback":
             self.handle_callback(parsed)
-        elif parsed.path == "/saved-users":
-            self.handle_saved_users()
         elif parsed.path == "/health":
             self.write_text("ok\n")
         else:
@@ -351,7 +247,9 @@ class OIDCTestHandler(BaseHTTPRequestHandler):
         return None
 
     def make_state_cookie(self, state, nonce):
-        payload = json.dumps({"state": state, "nonce": nonce, "ts": int(time.time())}).encode("utf-8")
+        payload = json.dumps(
+            {"state": state, "nonce": nonce, "ts": int(time.time())}
+        ).encode("utf-8")
         encoded = base64.urlsafe_b64encode(payload).decode("ascii").rstrip("=")
         return f"{COOKIE_NAME}={encoded}; Path=/; HttpOnly; SameSite=Lax; Max-Age=600"
 
@@ -359,11 +257,10 @@ class OIDCTestHandler(BaseHTTPRequestHandler):
         return f"{COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0"
 
     def handle_index(self):
-        saved_info = render_saved_user_info(title="最近保存的用户信息")
         body = f"""
-<h1>OIDC 测试应用</h1>
+<h1>OIDC Test App</h1>
 <div class="panel">
-  <p>这个应用用于验证 OIDC 应用能否通过 SATOSA 登录，并在登录后拿到用户信息。</p>
+  <p>This app verifies that an OIDC client can log in through SATOSA and fetch user claims without writing local user records.</p>
   <dl>
     <dt>Issuer</dt><dd>{html.escape(ISSUER)}</dd>
     <dt>Discovery URL</dt><dd>{html.escape(DISCOVERY_URL)}</dd>
@@ -373,28 +270,17 @@ class OIDCTestHandler(BaseHTTPRequestHandler):
     <dt>TLS Verify</dt><dd>{html.escape(str(VERIFY_TLS))}</dd>
   </dl>
   <div class="actions">
-    <a class="button" href="/login">开始 OIDC 登录</a>
-    <a class="button secondary" href="/saved-users">查看保存记录</a>
+    <a class="button" href="/login">Start OIDC Login</a>
   </div>
 </div>
-{saved_info}
 """
         self.write_html(*render_page("OIDC Test App", body))
-
-    def handle_saved_users(self):
-        saved_info = render_saved_user_info(title="最近保存的用户信息")
-        body = f"""
-<h1>保存的用户信息</h1>
-{saved_info}
-<div class="actions"><a class="button secondary" href="/">返回首页</a></div>
-"""
-        self.write_html(*render_page("Saved Users", body))
 
     def handle_login(self):
         try:
             metadata = discovery()
         except Exception as exc:
-            self.write_error("Discovery 失败", exc)
+            self.write_error("Discovery failed", exc)
             return
 
         state = secrets.token_urlsafe(24)
@@ -414,24 +300,32 @@ class OIDCTestHandler(BaseHTTPRequestHandler):
         query = urllib.parse.parse_qs(parsed.query)
         if "error" in query:
             body = f"""
-<h1>登录失败</h1>
+<h1>Login Failed</h1>
 <div class="panel">
   <p class="error">{html.escape(query.get("error", [""])[0])}</p>
   <pre>{render_json(query)}</pre>
-  <div class="actions"><a class="button secondary" href="/">返回首页</a></div>
+  <div class="actions"><a class="button secondary" href="/">Back</a></div>
 </div>
 """
-            self.write_html(*render_page("Login Error", body), cookies=[self.clear_state_cookie()])
+            self.write_html(
+                *render_page("Login Error", body), cookies=[self.clear_state_cookie()]
+            )
             return
 
         code = query.get("code", [""])[0]
         returned_state = query.get("state", [""])[0]
         cookie_state = self.read_state_cookie()
         if not code:
-            self.write_error("Callback 缺少 code", ValueError("OIDC callback did not include an authorization code"))
+            self.write_error(
+                "Callback missing code",
+                ValueError("OIDC callback did not include an authorization code"),
+            )
             return
         if not cookie_state or returned_state != cookie_state.get("state"):
-            self.write_error("state 校验失败", ValueError("Callback state does not match the login session"))
+            self.write_error(
+                "State validation failed",
+                ValueError("Callback state does not match the login session"),
+            )
             return
 
         try:
@@ -439,37 +333,37 @@ class OIDCTestHandler(BaseHTTPRequestHandler):
             token_response = self.exchange_code(metadata["token_endpoint"], code)
             id_token = token_response.get("id_token")
             decoded_id_token = decode_jwt_without_verification(id_token)
-            userinfo = self.fetch_userinfo(metadata.get("userinfo_endpoint"), token_response.get("access_token"))
+            userinfo = self.fetch_userinfo(
+                metadata.get("userinfo_endpoint"), token_response.get("access_token")
+            )
         except Exception as exc:
-            self.write_error("换取 token 或 userinfo 失败", exc)
+            self.write_error("Token or userinfo request failed", exc)
             return
 
         id_claims = decoded_id_token.get("claims") if decoded_id_token else {}
         userinfo_sub = userinfo.get("sub") if isinstance(userinfo, dict) else None
-        sub_match = bool(id_claims.get("sub") and userinfo_sub and id_claims.get("sub") == userinfo_sub)
-        sub_status = "一致" if sub_match else "无法确认或不一致"
+        sub_match = bool(
+            id_claims.get("sub") and userinfo_sub and id_claims.get("sub") == userinfo_sub
+        )
+        sub_status = "match" if sub_match else "not confirmed"
         sub_class = "ok" if sub_match else "warn"
-        saved_info = render_saved_user_info(title="SATOSA 本地保存的用户信息")
 
         body = f"""
-<h1>登录成功</h1>
+<h1>Login Success</h1>
 <div class="panel">
   <dl>
     <dt>code</dt><dd>{html.escape(code[:32])}...</dd>
     <dt>id_token.sub</dt><dd>{html.escape(str(id_claims.get("sub", "")))}</dd>
     <dt>userinfo.sub</dt><dd>{html.escape(str(userinfo_sub or ""))}</dd>
-    <dt>sub 校验</dt><dd class="{sub_class}">{sub_status}</dd>
+    <dt>sub check</dt><dd class="{sub_class}">{sub_status}</dd>
     <dt>email</dt><dd>{html.escape(str(id_claims.get("email") or (userinfo or {}).get("email") or ""))}</dd>
     <dt>name</dt><dd>{html.escape(str(id_claims.get("name") or (userinfo or {}).get("name") or ""))}</dd>
     <dt>preferred_username</dt><dd>{html.escape(str(id_claims.get("preferred_username") or (userinfo or {}).get("preferred_username") or ""))}</dd>
   </dl>
   <div class="actions">
-    <a class="button secondary" href="/">返回首页</a>
-    <a class="button secondary" href="/saved-users">查看保存记录</a>
+    <a class="button secondary" href="/">Back</a>
   </div>
 </div>
-
-{saved_info}
 
 <h2>ID Token Claims</h2>
 <pre>{render_json(id_claims)}</pre>
@@ -483,7 +377,9 @@ class OIDCTestHandler(BaseHTTPRequestHandler):
 <h2>Discovery Metadata</h2>
 <pre>{render_json(metadata["raw"])}</pre>
 """
-        self.write_html(*render_page("Login Success", body), cookies=[self.clear_state_cookie()])
+        self.write_html(
+            *render_page("Login Success", body), cookies=[self.clear_state_cookie()]
+        )
 
     def exchange_code(self, token_endpoint, code):
         credentials = f"{CLIENT_ID}:{CLIENT_SECRET}".encode("utf-8")
@@ -523,7 +419,7 @@ class OIDCTestHandler(BaseHTTPRequestHandler):
 <div class="panel">
   <p class="error">{html.escape(str(exc))}</p>
   <pre>{render_json(detail)}</pre>
-  <div class="actions"><a class="button secondary" href="/">返回首页</a></div>
+  <div class="actions"><a class="button secondary" href="/">Back</a></div>
 </div>
 """
         self.write_html(*render_page(title, body, HTTPStatus.INTERNAL_SERVER_ERROR))

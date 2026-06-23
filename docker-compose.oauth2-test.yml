@@ -11,7 +11,6 @@ services:
       - ./plugins:/opt/satosa/plugins
       - ./certs:/opt/satosa/pki
       - ./metadata:/opt/satosa/metadata
-      - ./data:/opt/satosa/data
     environment:
       SATOSA_STATE_ENCRYPTION_KEY: "IHEP_SECRET_123"
       SATOSA_USER_ID_HASH_SALT: "IHEP_SALT_123"

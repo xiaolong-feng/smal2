@@ -11,22 +11,9 @@ services:
       - ./plugins:/opt/satosa/plugins
       - ./certs:/opt/satosa/pki
       - ./metadata:/opt/satosa/metadata
-      - ./data:/opt/satosa/data
     environment:
       SATOSA_STATE_ENCRYPTION_KEY: "IHEP_SECRET_123"
       SATOSA_USER_ID_HASH_SALT: "IHEP_SALT_123"
       SATOSA_CONFIG: "/opt/satosa/etc/proxy_conf.yaml"
     command: >
       gunicorn -b 0.0.0.0:443 --timeout 120 --graceful-timeout 30 --keyfile /opt/satosa/pki/satosa.key --certfile /opt/satosa/pki/satosa.crt satosa.wsgi:app
-
-  saved-user-viewer:
-    build: ./saved-user-viewer
-    container_name: saved-user-viewer
-    ports:
-      - "18081:8080"
-    environment:
-      SAVED_USER_ATTRIBUTES_PATH: "/opt/satosa/data/user_attributes.jsonl"
-      REQUESTER_FILTER: "https://indico3-ldap.ihep.ac.cn/shibboleth"
-      PAGE_TITLE: "Indico SAML 保存的用户信息"
-    volumes:
-      - ./data:/opt/satosa/data:ro
