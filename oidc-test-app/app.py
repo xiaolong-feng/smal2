@@ -24,6 +24,10 @@ VERIFY_TLS = os.getenv("OIDC_VERIFY_TLS", "false").lower() in {"1", "true", "yes
 AUTHORIZATION_ENDPOINT = os.getenv("OIDC_AUTHORIZATION_ENDPOINT")
 TOKEN_ENDPOINT = os.getenv("OIDC_TOKEN_ENDPOINT")
 USERINFO_ENDPOINT = os.getenv("OIDC_USERINFO_ENDPOINT")
+SAVED_USER_ATTRIBUTES_PATH = os.getenv(
+    "SAVED_USER_ATTRIBUTES_PATH", "/opt/satosa/data/user_attributes.jsonl"
+)
+SAVED_USER_ATTRIBUTES_LIMIT = int(os.getenv("SAVED_USER_ATTRIBUTES_LIMIT", "5"))
 
 COOKIE_NAME = "oidc_test_state"
 
@@ -73,6 +77,93 @@ def decode_jwt_without_verification(token):
 
 def render_json(value):
     return html.escape(json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True))
+
+
+def read_saved_user_records(limit=SAVED_USER_ATTRIBUTES_LIMIT):
+    if not os.path.exists(SAVED_USER_ATTRIBUTES_PATH):
+        return [], None
+
+    try:
+        with open(SAVED_USER_ATTRIBUTES_PATH, encoding="utf-8") as saved_file:
+            lines = [line.strip() for line in saved_file if line.strip()]
+    except OSError as exc:
+        return [], exc
+
+    records = []
+    error = None
+    for line in reversed(lines[-limit:]):
+        try:
+            records.append(json.loads(line))
+        except json.JSONDecodeError as exc:
+            error = exc
+
+    return records, error
+
+
+def render_attribute_value(value):
+    if isinstance(value, list):
+        return ", ".join(str(item) for item in value)
+    if isinstance(value, dict):
+        return json.dumps(value, ensure_ascii=False, sort_keys=True)
+    return str(value)
+
+
+def render_saved_user_info(records=None, error=None, title="SATOSA 本地保存的用户信息"):
+    if records is None:
+        records, error = read_saved_user_records()
+
+    if error:
+        status = f'<p class="error">读取保存文件失败：{html.escape(str(error))}</p>'
+    elif not records:
+        status = '<p class="warn">还没有读取到保存记录。完成一次登录后，这里会显示 SATOSA 落盘的用户信息。</p>'
+    else:
+        status = ""
+
+    latest = records[0] if records else None
+    if latest:
+        attributes = latest.get("attributes") or {}
+        if attributes:
+            rows = "\n".join(
+                "<tr><th>{0}</th><td>{1}</td></tr>".format(
+                    html.escape(str(name)),
+                    html.escape(render_attribute_value(value)),
+                )
+                for name, value in sorted(attributes.items())
+            )
+            attributes_html = f"""
+  <table class="attributes-table">
+    <tbody>
+{rows}
+    </tbody>
+  </table>
+"""
+        else:
+            attributes_html = '<p class="warn">保存记录里没有 attributes 字段。</p>'
+
+        record_info = f"""
+  <dl>
+    <dt>保存时间</dt><dd>{html.escape(str(latest.get("saved_at", "")))}</dd>
+    <dt>保存服务</dt><dd>{html.escape(str(latest.get("service", "")))}</dd>
+    <dt>记录文件</dt><dd>{html.escape(SAVED_USER_ATTRIBUTES_PATH)}</dd>
+  </dl>
+{attributes_html}
+  <h2>最近保存记录 Raw JSON</h2>
+  <pre>{render_json(latest)}</pre>
+"""
+    else:
+        record_info = f"""
+  <dl>
+    <dt>记录文件</dt><dd>{html.escape(SAVED_USER_ATTRIBUTES_PATH)}</dd>
+  </dl>
+"""
+
+    return f"""
+<h2>{html.escape(title)}</h2>
+<div class="panel">
+{status}
+{record_info}
+</div>
+"""
 
 
 def render_page(title, body, status=HTTPStatus.OK):
@@ -150,6 +241,25 @@ def render_page(title, body, status=HTTPStatus.OK):
       margin: 0;
       overflow-wrap: anywhere;
     }}
+    .attributes-table {{
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 18px;
+      table-layout: fixed;
+    }}
+    .attributes-table th,
+    .attributes-table td {{
+      border-top: 1px solid #e8eaed;
+      padding: 10px 8px;
+      text-align: left;
+      vertical-align: top;
+      overflow-wrap: anywhere;
+    }}
+    .attributes-table th {{
+      width: 220px;
+      color: #3c4043;
+      font-weight: 700;
+    }}
     pre {{
       overflow: auto;
       background: #111827;
@@ -192,6 +302,8 @@ class OIDCTestHandler(BaseHTTPRequestHandler):
             self.handle_login()
         elif parsed.path == "/callback":
             self.handle_callback(parsed)
+        elif parsed.path == "/saved-users":
+            self.handle_saved_users()
         elif parsed.path == "/health":
             self.write_text("ok\n")
         else:
@@ -247,6 +359,7 @@ class OIDCTestHandler(BaseHTTPRequestHandler):
         return f"{COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0"
 
     def handle_index(self):
+        saved_info = render_saved_user_info(title="最近保存的用户信息")
         body = f"""
 <h1>OIDC 测试应用</h1>
 <div class="panel">
@@ -261,10 +374,21 @@ class OIDCTestHandler(BaseHTTPRequestHandler):
   </dl>
   <div class="actions">
     <a class="button" href="/login">开始 OIDC 登录</a>
+    <a class="button secondary" href="/saved-users">查看保存记录</a>
   </div>
 </div>
+{saved_info}
 """
         self.write_html(*render_page("OIDC Test App", body))
+
+    def handle_saved_users(self):
+        saved_info = render_saved_user_info(title="最近保存的用户信息")
+        body = f"""
+<h1>保存的用户信息</h1>
+{saved_info}
+<div class="actions"><a class="button secondary" href="/">返回首页</a></div>
+"""
+        self.write_html(*render_page("Saved Users", body))
 
     def handle_login(self):
         try:
@@ -325,6 +449,7 @@ class OIDCTestHandler(BaseHTTPRequestHandler):
         sub_match = bool(id_claims.get("sub") and userinfo_sub and id_claims.get("sub") == userinfo_sub)
         sub_status = "一致" if sub_match else "无法确认或不一致"
         sub_class = "ok" if sub_match else "warn"
+        saved_info = render_saved_user_info(title="SATOSA 本地保存的用户信息")
 
         body = f"""
 <h1>登录成功</h1>
@@ -338,8 +463,13 @@ class OIDCTestHandler(BaseHTTPRequestHandler):
     <dt>name</dt><dd>{html.escape(str(id_claims.get("name") or (userinfo or {}).get("name") or ""))}</dd>
     <dt>preferred_username</dt><dd>{html.escape(str(id_claims.get("preferred_username") or (userinfo or {}).get("preferred_username") or ""))}</dd>
   </dl>
-  <div class="actions"><a class="button secondary" href="/">返回首页</a></div>
+  <div class="actions">
+    <a class="button secondary" href="/">返回首页</a>
+    <a class="button secondary" href="/saved-users">查看保存记录</a>
+  </div>
 </div>
+
+{saved_info}
 
 <h2>ID Token Claims</h2>
 <pre>{render_json(id_claims)}</pre>

@@ -1,0 +1,9 @@
+module: normalize_attributes.NormalizeAttributes
+name: NormalizeAttributes
+config:
+  deduplicate: true
+  display_name_attribute: display_name
+  display_name_sources:
+    - given_name
+    - eppn
+    - mail

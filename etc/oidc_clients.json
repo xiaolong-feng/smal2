@@ -7,5 +7,14 @@
       "http://localhost:18080/callback"
     ],
     "client_secret": "test-secret"
+  },
+  "oauth2-adapter": {
+    "response_types": [
+      "code"
+    ],
+    "redirect_uris": [
+      "http://localhost:19090/callback"
+    ],
+    "client_secret": "adapter-secret"
   }
 }

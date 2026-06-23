@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<display-name>umtOauthDemo</display-name>
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+	<servlet>
+		<servlet-name>authorization</servlet-name>
+		<servlet-class>demo.UmtOAuthAddressServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>authorization</servlet-name>
+		<url-pattern>/authorization</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>testtoken</servlet-name>
+		<servlet-class>demo.OauthTokenServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>testtoken</servlet-name>
+		<url-pattern>/testtoken</url-pattern>
+	</servlet-mapping>
+</web-app>

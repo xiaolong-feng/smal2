@@ -1,0 +1,7 @@
+module: save_user_attributes.SaveUserAttributes
+name: SaveUserAttributes
+config:
+  output_path: "/opt/satosa/data/user_attributes.jsonl"
+  fail_on_error: false
+  include_context: true
+  max_depth: 5

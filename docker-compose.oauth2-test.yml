@@ -1,0 +1,58 @@
+services:
+  satosa:
+    build: .
+    container_name: ihep-proxy-test
+    user: root
+    ports:
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - ./etc:/opt/satosa/etc
+      - ./plugins:/opt/satosa/plugins
+      - ./certs:/opt/satosa/pki
+      - ./metadata:/opt/satosa/metadata
+      - ./data:/opt/satosa/data
+    environment:
+      SATOSA_STATE_ENCRYPTION_KEY: "IHEP_SECRET_123"
+      SATOSA_USER_ID_HASH_SALT: "IHEP_SALT_123"
+      SATOSA_CONFIG: "/opt/satosa/etc/proxy_conf.oidc.yaml"
+    command: >
+      gunicorn -b 0.0.0.0:443 --timeout 120 --graceful-timeout 30 --keyfile /opt/satosa/pki/satosa.key --certfile /opt/satosa/pki/satosa.crt satosa.wsgi:app
+
+  oauth2-adapter:
+    build: ./oauth2-adapter
+    container_name: oauth2-adapter
+    ports:
+      - "19090:8080"
+    environment:
+      ADAPTER_PUBLIC_BASE: "http://localhost:19090"
+      SATOSA_DISCOVERY_URL: "https://satosa/.well-known/openid-configuration"
+      SATOSA_TOKEN_ENDPOINT: "https://satosa/OIDCFrontend/token"
+      SATOSA_USERINFO_ENDPOINT: "https://satosa/OIDCFrontend/userinfo"
+      SATOSA_CLIENT_ID: "oauth2-adapter"
+      SATOSA_CLIENT_SECRET: "adapter-secret"
+      SATOSA_REDIRECT_URI: "http://localhost:19090/callback"
+      SATOSA_SCOPE: "openid profile email"
+      SATOSA_VERIFY_TLS: "false"
+      OAUTH2_CLIENT_ID: "oauth2-test-app"
+      OAUTH2_CLIENT_SECRET: "oauth-test-secret"
+      OAUTH2_CLIENT_REDIRECT_URI: "http://localhost:19091/callback"
+    depends_on:
+      - satosa
+
+  oauth2-test-app:
+    build: ./oauth2-test-app
+    container_name: oauth2-test-app
+    ports:
+      - "19091:8080"
+    environment:
+      OAUTH_AUTHORIZATION_ENDPOINT: "http://localhost:19090/authorize"
+      OAUTH_TOKEN_ENDPOINT: "http://oauth2-adapter:8080/token"
+      OAUTH_USERINFO_ENDPOINT: "http://oauth2-adapter:8080/userinfo"
+      OAUTH_RESOURCE_ENDPOINT: "http://oauth2-adapter:8080/resource"
+      OAUTH_CLIENT_ID: "oauth2-test-app"
+      OAUTH_CLIENT_SECRET: "oauth-test-secret"
+      OAUTH_REDIRECT_URI: "http://localhost:19091/callback"
+      OAUTH_SCOPE: "profile email"
+    depends_on:
+      - oauth2-adapter

@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="umtOauthDemo:war exploded">
+    <output-path>$PROJECT_DIR$/classes/artifacts/umtOauthDemo_war_exploded</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="umtOauthDemo" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="lib" />
+        </element>
+      </element>
+      <element id="javaee-facet-resources" facet="umtOauthDemo/web/Web" />
+    </root>
+  </artifact>
+</component>

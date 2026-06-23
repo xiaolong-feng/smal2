@@ -15,11 +15,18 @@ PLUGIN_PATHS:
   - "/opt/satosa/plugins/frontends"
   - "/opt/satosa/plugins/backends"
 
+CUSTOM_PLUGIN_MODULE_PATHS:
+  - "/opt/satosa/plugins/micro_services"
+
 FRONTEND_MODULES:
   - "/opt/satosa/plugins/frontends/saml2_frontend.yaml"
 
 BACKEND_MODULES:
   - "/opt/satosa/plugins/backends/saml2_backend.yaml"
+
+MICRO_SERVICES:
+  - "/opt/satosa/plugins/micro_services/normalize_attributes.yaml"
+  - "/opt/satosa/plugins/micro_services/save_user_attributes.yaml"
 
 LOGGING:
   version: 1
