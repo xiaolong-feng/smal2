@@ -13,7 +13,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 PORT = int(os.getenv("PORT", "8080"))
 AUTHORIZATION_ENDPOINT = os.getenv(
-    "OAUTH_AUTHORIZATION_ENDPOINT", "http://localhost:19090/authorize"
+    "OAUTH_AUTHORIZATION_ENDPOINT", "http://202.122.38.207:19090/authorize"
 )
 TOKEN_ENDPOINT = os.getenv("OAUTH_TOKEN_ENDPOINT", "http://oauth2-adapter:8080/token")
 USERINFO_ENDPOINT = os.getenv(
@@ -24,7 +24,7 @@ RESOURCE_ENDPOINT = os.getenv(
 )
 CLIENT_ID = os.getenv("OAUTH_CLIENT_ID", "oauth2-test-app")
 CLIENT_SECRET = os.getenv("OAUTH_CLIENT_SECRET", "oauth-test-secret")
-REDIRECT_URI = os.getenv("OAUTH_REDIRECT_URI", "http://localhost:19091/callback")
+REDIRECT_URI = os.getenv("OAUTH_REDIRECT_URI", "http://202.122.38.207:19091/callback")
 SCOPE = os.getenv("OAUTH_SCOPE", "profile email")
 COOKIE_NAME = "oauth2_test_state"
 

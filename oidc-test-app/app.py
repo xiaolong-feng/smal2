@@ -12,13 +12,13 @@ from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 
-ISSUER = os.getenv("OIDC_ISSUER", "https://10.10.0.26").rstrip("/")
+ISSUER = os.getenv("OIDC_ISSUER", "https://202.122.38.207:8443").rstrip("/")
 DISCOVERY_URL = os.getenv(
     "OIDC_DISCOVERY_URL", f"{ISSUER}/.well-known/openid-configuration"
 )
 CLIENT_ID = os.getenv("OIDC_CLIENT_ID", "oidc-test-app")
 CLIENT_SECRET = os.getenv("OIDC_CLIENT_SECRET", "test-secret")
-REDIRECT_URI = os.getenv("OIDC_REDIRECT_URI", "http://localhost:18080/callback")
+REDIRECT_URI = os.getenv("OIDC_REDIRECT_URI", "http://202.122.38.207:18080/callback")
 SCOPE = os.getenv("OIDC_SCOPE", "openid profile email")
 PORT = int(os.getenv("PORT", "8080"))
 VERIFY_TLS = os.getenv("OIDC_VERIFY_TLS", "false").lower() in {

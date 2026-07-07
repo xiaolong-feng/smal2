@@ -13,7 +13,7 @@
     -->
     <AttributeFilterPolicy id="idpcarsidefault">
         <PolicyRequirementRule xsi:type="NOT">
-            <Rule xsi:type="Requester" value="https://10.10.0.26/sp" />
+            <Rule xsi:type="Requester" value="https://202.122.38.207:8443/sp" />
         </PolicyRequirementRule>
 
         <AttributeRule attributeID="eduPersonScopedAffiliation" permitAny="true"/>
@@ -37,7 +37,7 @@
         mail OID and produce duplicate values downstream in Indico.
     -->
     <AttributeFilterPolicy id="SATOSAProxyPolicy">
-        <PolicyRequirementRule xsi:type="Requester" value="https://10.10.0.26/sp" />
+        <PolicyRequirementRule xsi:type="Requester" value="https://202.122.38.207:8443/sp" />
 
         <AttributeRule attributeID="samlPairwiseID" permitAny="true"/>
         <AttributeRule attributeID="eduPersonTargetedID" permitAny="true"/>

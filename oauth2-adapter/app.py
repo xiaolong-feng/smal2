@@ -14,7 +14,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 
 PORT = int(os.getenv("PORT", "8080"))
-PUBLIC_BASE = os.getenv("ADAPTER_PUBLIC_BASE", "http://localhost:19090").rstrip("/")
+PUBLIC_BASE = os.getenv("ADAPTER_PUBLIC_BASE", "http://202.122.38.207:19090").rstrip("/")
 
 SATOSA_DISCOVERY_URL = os.getenv(
     "SATOSA_DISCOVERY_URL", "https://satosa/.well-known/openid-configuration"
@@ -31,7 +31,7 @@ VERIFY_TLS = os.getenv("SATOSA_VERIFY_TLS", "false").lower() in {"1", "true", "y
 OAUTH2_CLIENT_ID = os.getenv("OAUTH2_CLIENT_ID", "oauth2-test-app")
 OAUTH2_CLIENT_SECRET = os.getenv("OAUTH2_CLIENT_SECRET", "oauth-test-secret")
 OAUTH2_CLIENT_REDIRECT_URI = os.getenv(
-    "OAUTH2_CLIENT_REDIRECT_URI", "http://localhost:19091/callback"
+    "OAUTH2_CLIENT_REDIRECT_URI", "http://202.122.38.207:19091/callback"
 )
 
 CODE_TTL = int(os.getenv("OAUTH2_CODE_TTL", "600"))

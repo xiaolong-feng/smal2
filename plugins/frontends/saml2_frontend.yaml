@@ -12,7 +12,7 @@ config:
       urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST: saml2/idp/slo/post
 
   idp_config:
-    entityid: "https://10.10.0.26/idp"
+    entityid: "https://202.122.38.207:8443/idp"
     description: "SATOSA IdP Frontend"
 
     key_file: "/opt/satosa/pki/satosa.key"
@@ -30,7 +30,7 @@ config:
       name:
         - [SATOSA Proxy, en]
       url:
-        - [https://10.10.0.26, en]
+        - [https://202.122.38.207:8443, en]
 
     contact_person:
       - contact_type: technical

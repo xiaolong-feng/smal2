@@ -9,12 +9,12 @@ services:
     ports:
       - "18080:8080"
     environment:
-      OIDC_ISSUER: "${SATOSA_PUBLIC_BASE:-https://10.10.0.26}"
+      OIDC_ISSUER: "${SATOSA_PUBLIC_BASE:-https://202.122.38.207:8443}"
       OIDC_DISCOVERY_URL: "https://satosa/.well-known/openid-configuration"
       OIDC_TOKEN_ENDPOINT: "https://satosa/OIDCFrontend/token"
       OIDC_USERINFO_ENDPOINT: "https://satosa/OIDCFrontend/userinfo"
       OIDC_CLIENT_ID: "oidc-test-app"
       OIDC_CLIENT_SECRET: "test-secret"
-      OIDC_REDIRECT_URI: "http://localhost:18080/callback"
+      OIDC_REDIRECT_URI: "http://202.122.38.207:18080/callback"
       OIDC_SCOPE: "openid profile email"
       OIDC_VERIFY_TLS: "false"

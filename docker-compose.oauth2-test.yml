@@ -4,7 +4,7 @@ services:
     container_name: ihep-proxy-test
     user: root
     ports:
-      - "443:443"
+      - "8443:443"
       - "8080:8080"
     volumes:
       - ./etc:/opt/satosa/etc
@@ -24,18 +24,18 @@ services:
     ports:
       - "19090:8080"
     environment:
-      ADAPTER_PUBLIC_BASE: "http://localhost:19090"
+      ADAPTER_PUBLIC_BASE: "http://202.122.38.207:19090"
       SATOSA_DISCOVERY_URL: "https://satosa/.well-known/openid-configuration"
       SATOSA_TOKEN_ENDPOINT: "https://satosa/OIDCFrontend/token"
       SATOSA_USERINFO_ENDPOINT: "https://satosa/OIDCFrontend/userinfo"
       SATOSA_CLIENT_ID: "oauth2-adapter"
       SATOSA_CLIENT_SECRET: "adapter-secret"
-      SATOSA_REDIRECT_URI: "http://localhost:19090/callback"
+      SATOSA_REDIRECT_URI: "http://202.122.38.207:19090/callback"
       SATOSA_SCOPE: "openid profile email"
       SATOSA_VERIFY_TLS: "false"
       OAUTH2_CLIENT_ID: "oauth2-test-app"
       OAUTH2_CLIENT_SECRET: "oauth-test-secret"
-      OAUTH2_CLIENT_REDIRECT_URI: "http://localhost:19091/callback"
+      OAUTH2_CLIENT_REDIRECT_URI: "http://202.122.38.207:19091/callback"
     depends_on:
       - satosa
 
@@ -45,13 +45,13 @@ services:
     ports:
       - "19091:8080"
     environment:
-      OAUTH_AUTHORIZATION_ENDPOINT: "http://localhost:19090/authorize"
+      OAUTH_AUTHORIZATION_ENDPOINT: "http://202.122.38.207:19090/authorize"
       OAUTH_TOKEN_ENDPOINT: "http://oauth2-adapter:8080/token"
       OAUTH_USERINFO_ENDPOINT: "http://oauth2-adapter:8080/userinfo"
       OAUTH_RESOURCE_ENDPOINT: "http://oauth2-adapter:8080/resource"
       OAUTH_CLIENT_ID: "oauth2-test-app"
       OAUTH_CLIENT_SECRET: "oauth-test-secret"
-      OAUTH_REDIRECT_URI: "http://localhost:19091/callback"
+      OAUTH_REDIRECT_URI: "http://202.122.38.207:19091/callback"
       OAUTH_SCOPE: "profile email"
     depends_on:
       - oauth2-adapter

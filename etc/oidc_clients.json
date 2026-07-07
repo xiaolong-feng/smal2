@@ -4,7 +4,7 @@
       "code"
     ],
     "redirect_uris": [
-      "http://localhost:18080/callback"
+      "http://202.122.38.207:18080/callback"
     ],
     "client_secret": "test-secret"
   },
@@ -13,7 +13,7 @@
       "code"
     ],
     "redirect_uris": [
-      "http://localhost:19090/callback"
+      "http://202.122.38.207:19090/callback"
     ],
     "client_secret": "adapter-secret"
   }
