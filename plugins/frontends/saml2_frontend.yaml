@@ -22,6 +22,9 @@ config:
 
     metadata:
       local:
+        # Keycloak is the local SAML SP that brokers authentication to this SATOSA IdP.
+        - "/opt/satosa/metadata/sp/keycloak-sso-local.xml"
+        # Retain the legacy direct Indico SP during the migration.
         - "/opt/satosa/metadata/sp/indico.xml"
 
     organization:

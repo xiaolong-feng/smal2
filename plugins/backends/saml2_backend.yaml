@@ -15,7 +15,10 @@ config:
 
     metadata:
       local:
-        - "/opt/satosa/metadata/idp/carsifed-metadata.xml"
+        # POC: use the valid IHEP IdP descriptor while the CARSI aggregate
+        # metadata file is expired. Restore the CARSI aggregate after renewal
+        # to support federation-wide IdP discovery.
+        - "/opt/satosa/metadata/idp/external-idp.xml"
 
     service:
       sp:
