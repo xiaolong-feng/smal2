@@ -1,6 +1,9 @@
 module: satosa.backends.saml2.SAMLBackend
 name: Saml2Backend
 config:
+  disco_srv: "https://ds.carsi.edu.cn/login/index.html"
+  memorize_idp: true
+
   sp_config:
     entityid: "https://10.10.0.26:8443/sp"
     name: "SATOSA SP"
@@ -12,7 +15,7 @@ config:
 
     metadata:
       local:
-        - "/opt/satosa/metadata/idp/external-idp.xml"
+        - "/opt/satosa/metadata/idp/carsifed-metadata.xml"
 
     service:
       sp:
@@ -25,6 +28,9 @@ config:
           assertion_consumer_service:
             - - "https://10.10.0.26:8443/Saml2Backend/saml2/acs"
               - "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+          discovery_response:
+            - - "https://10.10.0.26/Saml2Backend/disco"
+              - "urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol"
 
         name_id_policy_format: "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"
         
